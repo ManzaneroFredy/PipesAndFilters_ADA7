@@ -15,7 +15,31 @@ public class RemoveSWFilter extends Filter {
 
     @Override
     protected Object process(Object inputData) {
-        String[] phraseSplited = splitPhrase((String)inputData);
+        
+        if(inputData instanceof String){
+            String[] phraseDataReturn = new String[1];
+            phraseDataReturn[0] = removeStopWords((String) inputData);
+            return phraseDataReturn;
+        }else{
+            String[] tempInputData = (String[]) inputData;
+            String[] phrasesWhithoutSW = new String[tempInputData.length];
+
+            for(int i = 0; i < tempInputData.length;i++){
+                phrasesWhithoutSW[i] = removeStopWords(tempInputData[i]);
+
+                //Vaciamos el array de palabras para que no se acumlen en cada frase o combinacion del String[n]
+                phraseWithoutStopWords.clear();
+            }
+            return phrasesWhithoutSW;
+
+
+            
+        }
+
+    }
+
+    private String removeStopWords(String phrase){
+        String[] phraseSplited = splitPhrase(phrase);
 
 
         for (String phraseWord : phraseSplited) {
@@ -40,7 +64,6 @@ public class RemoveSWFilter extends Filter {
         }
 
         return appendPhrasesWithoutSW();
-
     }
 
     private String[] splitPhrase(String phrase){

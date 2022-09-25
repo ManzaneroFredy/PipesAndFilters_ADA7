@@ -15,9 +15,21 @@ public class CombinationsFilter extends Filter {
     protected Object process(Object inputData) {
         
         ArrayList<String> phraseWords = new ArrayList<String>();
-        for (String phraseWord : splitPhrase((String)inputData)) {
-            phraseWords.add(phraseWord);
+
+        //Si combinaciones se ejecuta primero, entonces va a recibir un String
+        if(inputData instanceof String){
+            for (String phraseWord : splitPhrase((String) inputData)) {
+                phraseWords.add(phraseWord);
+            }
+        }else{
+            //Si combinaciones se ejecuta despues de algun otro filtro, va a recibir String[]
+            //Como estamos manejando todo en String[], debemos obtener el unico elemento String[0] que pueden devolver los otros filtros.
+            String[] tempInputData = (String[]) inputData;
+            for (String phraseWord : splitPhrase(tempInputData[0])) {
+                phraseWords.add(phraseWord);
+            }
         }
+       
         
          // Creamos una copia del array original para modificarla
          ArrayList<String> modificablePhraseWords = (ArrayList<String>) phraseWords.clone();
@@ -43,8 +55,15 @@ public class CombinationsFilter extends Filter {
          }
          
          
+         String[] tempCombinations = appendPhraseCombinations();
+         
+         
+         //Vaciamos los arrays para evitar que se guarde basura
+         phraseCombinations = null;
+         WordsCombination.clear();
 
-         return appendPhraseCombinations();
+         //retornamos el array de combinaciones
+         return tempCombinations;
     }
 
 
